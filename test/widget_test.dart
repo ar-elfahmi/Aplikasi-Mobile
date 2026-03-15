@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dashboard_mahasiswa/main.dart';
 
 void main() {
-  testWidgets('Menampilkan judul dashboard', (WidgetTester tester) async {
+  testWidgets('Menampilkan header dashboard', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MyApp(),
@@ -12,6 +12,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Dashboard Mahasiswa D4TI'), findsOneWidget);
+    expect(find.text('Selamat Datang 👋'), findsOneWidget);
   });
 }

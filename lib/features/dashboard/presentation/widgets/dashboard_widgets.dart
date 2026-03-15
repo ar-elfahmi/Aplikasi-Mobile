@@ -1,43 +1,127 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/common_widgets.dart';
-import '../../data/models/dashboard_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dashboard_mahasiswa/core/constants/constants.dart';
+import 'package:dashboard_mahasiswa/core/theme/app_theme.dart';
+import 'package:dashboard_mahasiswa/features/dashboard/data/models/dashboard_model.dart';
 
-class DashboardHeader extends StatelessWidget {
+/// STAT CARD SIMPLE
+class StatCard extends StatelessWidget {
+  final DashboardStats stats;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  const StatCard({
+    Key? key,
+    required this.stats,
+    this.isSelected = false,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: isSelected ? 8 : 2,
+      color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : null,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+        child: Padding(
+          padding: const EdgeInsets.all(AppConstants.paddingMedium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                stats.title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                stats.value,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Text(
+                  stats.subtitle,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardHeader extends ConsumerWidget {
+  final String userName;
+
   const DashboardHeader({
     Key? key,
     required this.userName,
   }) : super(key: key);
 
-  final String userName;
-
   @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final dateLabel = '${now.day}/${now.month}/${now.year}';
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.paddingMedium,
-        vertical: AppConstants.paddingSmall,
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(AppConstants.paddingLarge),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(AppConstants.radiusLarge),
+          bottomRight: Radius.circular(AppConstants.radiusLarge),
+        ),
       ),
-      child: CustomCard(
+      child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Selamat datang, $userName',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Selamat Datang',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      userName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: AppConstants.paddingSmall),
+            const SizedBox(height: AppConstants.paddingMedium),
             Text(
-              'Update terakhir: $dateLabel',
-              style: const TextStyle(
-                color: AppTheme.textSecondaryColor,
+              'Data Mahasiswa D4TI',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.8),
               ),
             ),
           ],
@@ -47,84 +131,66 @@ class DashboardHeader extends StatelessWidget {
   }
 }
 
-class StatCard extends StatelessWidget {
-  const StatCard({
+class ModernStatCard extends StatelessWidget {
+  final DashboardStats stats;
+  final IconData icon;
+  final List<Color> gradientColors;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  const ModernStatCard({
     Key? key,
     required this.stats,
-    required this.isSelected,
-    required this.onTap,
+    required this.icon,
+    required this.gradientColors,
+    this.isSelected = false,
+    this.onTap,
   }) : super(key: key);
-
-  final DashboardStats stats;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final trendColor =
-        stats.isIncrease ? AppTheme.successColor : AppTheme.errorColor;
-
-    return CustomCard(
+    return GestureDetector(
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.first.withOpacity(0.3),
+              blurRadius: 20,
+              offset: Offset(0, isSelected ? 8 : 4),
+            )
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  stats.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              Icon(icon, color: Colors.white),
+              const Spacer(),
+              Text(
+                stats.value,
+                style: const TextStyle(
+                  fontSize: 26,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Icon(
-                stats.isIncrease ? Icons.trending_up : Icons.trending_down,
-                color: trendColor,
-              ),
+              Text(
+                stats.title,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              )
             ],
           ),
-          const SizedBox(height: AppConstants.paddingSmall),
-          Text(
-            stats.value,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: AppConstants.paddingSmall),
-          Text(
-            stats.subtitle,
-            style: const TextStyle(
-              color: AppTheme.textSecondaryColor,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.paddingSmall,
-              vertical: 4,
-            ),
-            decoration: BoxDecoration(
-              color: (isSelected ? AppTheme.primaryColor : trendColor)
-                  .withOpacity(0.12),
-              borderRadius: BorderRadius.circular(AppConstants.radiusSmall),
-            ),
-            child: Text(
-              '${stats.isIncrease ? '+' : '-'}${stats.percentage.toStringAsFixed(1)}%',
-              style: TextStyle(
-                color: isSelected ? AppTheme.primaryColor : trendColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

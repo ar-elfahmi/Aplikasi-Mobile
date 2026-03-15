@@ -1,26 +1,19 @@
-/// Model statistik di dashboard
 class DashboardStats {
   final String title;
   final String value;
   final String subtitle;
-  final double percentage;
-  final bool isIncrease;
 
   DashboardStats({
     required this.title,
     required this.value,
     required this.subtitle,
-    required this.percentage,
-    required this.isIncrease,
   });
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) {
     return DashboardStats(
       title: json['title'] ?? '',
-      value: json['value'] ?? '0',
+      value: json['value'] ?? '',
       subtitle: json['subtitle'] ?? '',
-      percentage: (json['percentage'] ?? 0).toDouble(),
-      isIncrease: json['isIncrease'] ?? true,
     );
   }
 
@@ -29,12 +22,10 @@ class DashboardStats {
       'title': title,
       'value': value,
       'subtitle': subtitle,
-      'percentage': percentage,
-      'isIncrease': isIncrease,
     };
   }
 }
-/// Model data dashboard
+
 class DashboardData {
   final List<DashboardStats> stats;
   final String userName;
@@ -48,13 +39,12 @@ class DashboardData {
 
   factory DashboardData.fromJson(Map<String, dynamic> json) {
     return DashboardData(
-      stats: (json['stats'] as List?)
-              ?.map((e) => DashboardStats.fromJson(e))
-              .toList() ??
-          [],
+      stats: (json['stats'] as List)
+          .map((e) => DashboardStats.fromJson(e))
+          .toList(),
       userName: json['userName'] ?? 'User',
       lastUpdate: DateTime.parse(
-        json['lastUpdate'] ?? DateTime.now().toIso8601String(),
+        json['lastUpdate'] ?? DateTime.now().toString(),
       ),
     );
   }
@@ -67,7 +57,6 @@ class DashboardData {
     };
   }
 
-  /// Copy with method
   DashboardData copyWith({
     List<DashboardStats>? stats,
     String? userName,

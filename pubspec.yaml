@@ -3,6 +3,7 @@ description: Dashboard Mahasiswa D4TI Flutter App
 
 publish_to: 'none'
 version: 1.0.0+1
+provider: ^6.0.5
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
