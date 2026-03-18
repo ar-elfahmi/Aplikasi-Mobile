@@ -1,46 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dashboard_mahasiswa/core/widgets/common_widgets.dart';
-import 'package:dashboard_mahasiswa/features/mahasiswa/presentation/providers/mahasiswa_provider.dart';
-import 'package:dashboard_mahasiswa/features/mahasiswa/presentation/widgets/mahasiswa_widget.dart';
+import '../providers/mahasiswa_provider.dart';
+import '../widgets/mahasiswa_widget.dart';
 
 class MahasiswaPage extends ConsumerWidget {
   const MahasiswaPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mahasiswaState = ref.watch(mahasiswaNotifierProvider);
+    final state = ref.watch(mahasiswaProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Data Mahasiswa'),
-        elevation: 0,
+        title: const Text('Mahasiswa (Comments API)'),
         actions: [
           IconButton(
-            onPressed: () {
-              ref.invalidate(mahasiswaNotifierProvider);
-            },
+            onPressed: () => ref.read(mahasiswaProvider.notifier).refresh(),
             icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Refresh',
           ),
         ],
       ),
-      body: mahasiswaState.when(
+      body: state.when(
         loading: () => const LoadingWidget(),
-        error: (error, stack) => CustomErrorWidget(
-          message: 'Gagal memuat data mahasiswa: ${error.toString()}',
-          onRetry: () {
-            ref.read(mahasiswaNotifierProvider.notifier).refresh();
-          },
+        error: (e, _) => CustomErrorWidget(
+          message: e.toString(),
+          onRetry: () => ref.read(mahasiswaProvider.notifier).refresh(),
         ),
-        data: (mahasiswaList) {
-          return MahasiswaListView(
-            mahasiswaList: mahasiswaList,
-            onRefresh: () {
-              ref.invalidate(mahasiswaNotifierProvider);
-            },
-          );
-        },
+        data: (list) => MahasiswaListView(
+          mahasiswaList: list,
+          onRefresh: () => ref.read(mahasiswaProvider.notifier).refresh(),
+        ),
       ),
     );
   }

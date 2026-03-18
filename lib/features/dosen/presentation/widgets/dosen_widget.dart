@@ -105,7 +105,10 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                   ),
                   child: Center(
                     child: Text(
-                      widget.dosen.nama.substring(0, 1).toUpperCase(),
+                      (widget.dosen.name.isNotEmpty
+                              ? widget.dosen.name[0]
+                              : '?')
+                          .toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -123,7 +126,7 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.dosen.nama,
+                        widget.dosen.name,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -132,7 +135,11 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                       const SizedBox(height: 8),
                       _buildInfoRow(
                         Icons.badge_outlined,
-                        "NIP: ${widget.dosen.nip}",
+                        widget.dosen.username,
+                      ),
+                      _buildInfoRow(
+                        Icons.location_on_outlined,
+                        "${widget.dosen.address.street}, ${widget.dosen.address.city}",
                       ),
                       const SizedBox(height: 4),
                       _buildInfoRow(
@@ -141,8 +148,8 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                       ),
                       const SizedBox(height: 4),
                       _buildInfoRow(
-                        Icons.school_outlined,
-                        widget.dosen.jurusan,
+                        Icons.map_outlined,
+                        "${widget.dosen.address.suite}, ${widget.dosen.address.zipcode}",
                       ),
                     ],
                   ),
@@ -249,8 +256,8 @@ class DosenListView extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
-              title: Text(dosen.nama),
-              subtitle: Text('${dosen.nip} • ${dosen.email}'),
+              title: Text(dosen.name),
+              subtitle: Text('${dosen.username} • ${dosen.email}'),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             ),
           );

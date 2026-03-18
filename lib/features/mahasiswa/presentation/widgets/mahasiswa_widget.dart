@@ -94,7 +94,10 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
                   ),
                   child: Center(
                     child: Text(
-                      widget.mahasiswa.nama.substring(0, 1).toUpperCase(),
+                      (widget.mahasiswa.name.isNotEmpty
+                              ? widget.mahasiswa.name[0]
+                              : '?')
+                          .toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -109,21 +112,24 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.mahasiswa.nama,
+                        widget.mahasiswa.name,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
+                      _buildInfoRow(Icons.badge_outlined,
+                          'Comment ID: ${widget.mahasiswa.id}'),
+                      const SizedBox(height: 4),
                       _buildInfoRow(
-                          Icons.badge_outlined, 'NIM: ${widget.mahasiswa.nim}'),
+                          Icons.email_outlined, widget.mahasiswa.email),
                       const SizedBox(height: 4),
-                      _buildInfoRow(Icons.groups_rounded,
-                          'Kelas: ${widget.mahasiswa.kelas}'),
-                      const SizedBox(height: 4),
-                      _buildInfoRow(Icons.calendar_today_outlined,
-                          'Angkatan: ${widget.mahasiswa.angkatan}'),
+                      _buildInfoRow(
+                        Icons.chat_bubble_outline,
+                        widget.mahasiswa.body,
+                        maxLines: 2,
+                      ),
                     ],
                   ),
                 ),
@@ -137,7 +143,7 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
+  Widget _buildInfoRow(IconData icon, String text, {int maxLines = 1}) {
     return Row(
       children: [
         Icon(icon, size: 14, color: Colors.grey[600]),
@@ -145,7 +151,7 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
         Expanded(
           child: Text(
             text,
-            maxLines: 1,
+            maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 13,
@@ -186,7 +192,7 @@ class MahasiswaListView extends StatelessWidget {
             SizedBox(height: 220),
             Center(
               child: Text(
-                'Data mahasiswa belum tersedia',
+                'Data komentar belum tersedia',
                 style: TextStyle(fontSize: 16),
               ),
             ),

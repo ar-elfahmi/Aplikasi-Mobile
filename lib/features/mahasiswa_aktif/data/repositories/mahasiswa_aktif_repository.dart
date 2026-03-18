@@ -1,38 +1,50 @@
-import 'package:dashboard_mahasiswa/features/mahasiswa_aktif/data/models/mahasiswa_aktif_model.dart';
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/mahasiswa_aktif_model.dart';
 
 class MahasiswaAktifRepository {
-  Future<List<MahasiswaAktifModel>> getMahasiswaAktifList() async {
-    await Future.delayed(const Duration(seconds: 1));
+  static const String _endpoint = 'https://jsonplaceholder.typicode.com/posts';
 
-    return [
-      MahasiswaAktifModel(
-        nama: 'Cahya Pratama',
-        nim: '210411100102',
-        semester: 8,
-        ipk: 3.74,
-        statusAkademik: 'Aktif',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Siti Rahmawati',
-        nim: '220411100033',
-        semester: 6,
-        ipk: 3.62,
-        statusAkademik: 'Aktif',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Rendi Saputra',
-        nim: '230411100045',
-        semester: 4,
-        ipk: 3.48,
-        statusAkademik: 'Aktif',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Mira Oktaviani',
-        nim: '240411100009',
-        semester: 2,
-        ipk: 3.90,
-        statusAkademik: 'Aktif Prestasi',
-      ),
-    ];
+  final Dio _dio;
+  final http.Client _httpClient;
+
+  MahasiswaAktifRepository({Dio? dio, http.Client? httpClient})
+      : _dio = dio ?? Dio(),
+        _httpClient = httpClient ?? http.Client();
+
+  Future<List<MahasiswaAktifModel>> getData() async {
+    try {
+      return await _getPostsWithHttp();
+    } catch (_) {
+      return _getPostsWithDio();
+    }
+  }
+
+  Future<List<MahasiswaAktifModel>> _getPostsWithHttp() async {
+    final response = await _httpClient.get(Uri.parse(_endpoint));
+    if (response.statusCode != 200) {
+      throw Exception('HTTP error: ${response.statusCode}');
+    }
+
+    final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+    return data
+        .map((e) => MahasiswaAktifModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<MahasiswaAktifModel>> _getPostsWithDio() async {
+    final response = await _dio.get(_endpoint);
+    if (response.statusCode != 200) {
+      throw Exception('Dio error: ${response.statusCode}');
+    }
+
+    final List<dynamic> data = response.data as List<dynamic>;
+
+    return data
+        .map((e) => MahasiswaAktifModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

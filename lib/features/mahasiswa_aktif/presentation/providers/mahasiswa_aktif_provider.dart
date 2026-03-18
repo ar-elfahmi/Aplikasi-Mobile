@@ -1,38 +1,36 @@
-import 'package:dashboard_mahasiswa/features/mahasiswa_aktif/data/models/mahasiswa_aktif_model.dart';
-import 'package:dashboard_mahasiswa/features/mahasiswa_aktif/data/repositories/mahasiswa_aktif_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/models/mahasiswa_aktif_model.dart';
+import '../../data/repositories/mahasiswa_aktif_repository.dart';
 
-final mahasiswaAktifRepositoryProvider =
-    Provider<MahasiswaAktifRepository>((ref) {
-  return MahasiswaAktifRepository();
-});
+final mahasiswaAktifRepoProvider =
+    Provider((ref) => MahasiswaAktifRepository());
 
 class MahasiswaAktifNotifier
     extends StateNotifier<AsyncValue<List<MahasiswaAktifModel>>> {
-  final MahasiswaAktifRepository _repository;
+  final MahasiswaAktifRepository _repo;
 
-  MahasiswaAktifNotifier(this._repository) : super(const AsyncValue.loading()) {
-    loadMahasiswaAktifList();
+  MahasiswaAktifNotifier(this._repo) : super(const AsyncValue.loading()) {
+    load();
   }
 
-  Future<void> loadMahasiswaAktifList() async {
+  Future<void> load() async {
     state = const AsyncValue.loading();
 
     try {
-      final data = await _repository.getMahasiswaAktifList();
+      final data = await _repo.getData();
       state = AsyncValue.data(data);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
+    } catch (e, s) {
+      state = AsyncValue.error(e, s);
     }
   }
 
   Future<void> refresh() async {
-    await loadMahasiswaAktifList();
+    await load();
   }
 }
 
-final mahasiswaAktifNotifierProvider = StateNotifierProvider.autoDispose<
-    MahasiswaAktifNotifier, AsyncValue<List<MahasiswaAktifModel>>>((ref) {
-  final repository = ref.watch(mahasiswaAktifRepositoryProvider);
-  return MahasiswaAktifNotifier(repository);
+final mahasiswaAktifProvider = StateNotifierProvider<MahasiswaAktifNotifier,
+    AsyncValue<List<MahasiswaAktifModel>>>((ref) {
+  final repo = ref.watch(mahasiswaAktifRepoProvider);
+  return MahasiswaAktifNotifier(repo);
 });

@@ -13,12 +13,10 @@ class MahasiswaModel {
 
   factory MahasiswaModel.fromJson(Map<String, dynamic> json) {
     return MahasiswaModel(
-      id: json['id'] is int
-          ? json['id'] as int
-          : int.tryParse('${json['id']}') ?? 0,
-      name: json['name']?.toString() ?? '',
-      email: json['email']?.toString() ?? '',
-      body: json['body']?.toString() ?? '',
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      body: json['body'],
     );
   }
 }

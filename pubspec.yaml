@@ -1,16 +1,17 @@
 name: dashboard_mahasiswa
 description: Dashboard Mahasiswa D4TI Flutter App
 
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
-provider: ^6.0.5
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.2
+  dio: ^5.4.0
 
   # ✅ Hanya gunakan Riverpod, HAPUS package 'provider' untuk menghindari konflik
   flutter_riverpod: ^2.5.1
